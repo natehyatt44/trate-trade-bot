@@ -1,0 +1,16 @@
+You are an expert trader and programmer. I require assistance writing an algorithmic trade signaler in python.
+Here is some information below on what I'm trying to accomplish.
+
+The data you received is a few months of hourly data from ETH/USD and BTC/USD
+We know the ETH can sometimes lag behind BTC price action wise
+Apply several different trading strategies using different trading signals such as RSI, MACD, Bollinger Bands, Volume, VWAP, DCA and others.
+Combine several of these signals to see if any buying opportunities were created when more than 1 signal was active.
+Determine the best buy / sell points within this price history when applying the above trading strategies
+1000 will be my start position and I will trade 5% of that at a time. So if I can 5% on a trade I will trade 5% of my total position.
+There will also be a 10% stop loss in play, with no position being sold other than at break even or higher, unless the stop loss itself is triggered.
+A buy signal above a previous buy signal will also trigger an immediate sell.
+I would like to know what my cumulative return $ and % wise would be on each pair
+I would like to see all my trades plotted on a chart visually as well.
+I don't want to overtrade and I only want to take the highest quality trades so don't place more than 2 trades a day.
+
+Please add all the above information to my python script below:
