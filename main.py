@@ -1,7 +1,7 @@
 import pandas as pd
 # Import necessary functions from other files
 from signals import Signals
-from backtest import trading_simulation, generate_all_signals, test_combinations
+from backtest import trading_simulation, test_combinations
 from pricedata import fetch_kucoin_data
 
 
@@ -21,7 +21,7 @@ def main():
         df['dca'] = signal.compute_dca(df, 24)
 
         # Generate Signals
-        df = generate_all_signals(df)
+        df = signal.generate_all_signals()
 
         # Test all combinations and get results
         results_df = test_combinations(df)

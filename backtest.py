@@ -1,10 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from itertools import combinations
-from signals import (
-    compute_macd, compute_bollinger_bands, compute_rsi, compute_vwap, compute_dca, generate_vwap_signals, generate_dca_signals,
-    generate_macd_signals, generate_bollinger_signals, generate_rsi_signals, generate_combined_signals
-)
+from signals import Signals
 
 def trading_simulation(df, signal_column, initial_capital=1000, trade_percent=0.05, max_trades_per_day=2, stop_loss=0.10):
     capital = initial_capital
@@ -12,6 +9,7 @@ def trading_simulation(df, signal_column, initial_capital=1000, trade_percent=0.
     open_positions = []
     trades_today = 0
     current_day = None
+
 
     for i, row in df.iterrows():
         date, price, signal_value = i, row['close'], row[signal_column]
@@ -63,17 +61,6 @@ def trading_simulation(df, signal_column, initial_capital=1000, trade_percent=0.
 
     portfolio_df = pd.DataFrame(portfolio)
     return capital, portfolio_df
-
-
-
-
-def generate_all_signals(df):
-    df = generate_macd_signals(df)
-    df = generate_bollinger_signals(df)
-    df = generate_rsi_signals(df)
-    df = generate_vwap_signals(df)
-    df = generate_dca_signals(df)
-    return df
 
 
 def test_combinations(df, initial_capital=1000, trade_percent=0.05, max_trades_per_day=2, stop_loss=0.10):

@@ -106,3 +106,11 @@ class Signals:
         self.df.loc[((self.df['macd_signal'] + self.df['bollinger_signal'] + self.df['rsi_signal']) >= 2), 'combined_signal'] = 1
         self.df.loc[((self.df['macd_signal'] + self.df['bollinger_signal'] + self.df['rsi_signal']) <= -2), 'combined_signal'] = -1
         return self.df
+
+    def generate_all_signals(self):
+        self.df = self.generate_macd_signals(self.df)
+        self.df = self.generate_bollinger_signals(self.df)
+        self.df = self.generate_rsi_signals(self.df)
+        self.df = self.generate_vwap_signals(self.df)
+        self.df = self.generate_dca_signals(self.df)
+        return self.df
