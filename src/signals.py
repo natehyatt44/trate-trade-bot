@@ -7,25 +7,11 @@ def compute_vwap(df):
     vwap = df['cum_vol_price'] / df['cum_vol']
     return vwap
 
-# DCA Calculation
-def compute_dca(df):
-    # For simplicity, we'll simulate DCA as buying the asset at regular intervals.
-    # We'll take a period of 24 hours for this hourly data.
-    dca_period = 24
-    df['dca'] = df['close'].rolling(window=dca_period).mean()
-    return df['dca']
-
 # Generate VWAP signals
 def generate_vwap_signals(df):
     df['vwap_signal'] = 0
     df.loc[df['close'] < df['vwap'], 'vwap_signal'] = 1
     df.loc[df['close'] > df['vwap'], 'vwap_signal'] = -1
-    return df
-
-# Generate DCA signals
-def generate_dca_signals(df):
-    df['dca_signal'] = 0
-    df.loc[df['close'] < df['dca'], 'dca_signal'] = 1
     return df
 
 def compute_macd(df, short_window=12, long_window=26, signal_window=9):
