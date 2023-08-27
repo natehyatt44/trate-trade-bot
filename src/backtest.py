@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import concurrent.futures
 from itertools import combinations
 from signals import (
     compute_macd, compute_bollinger_bands, compute_rsi, compute_vwap, generate_vwap_signals,
@@ -37,7 +39,7 @@ def trading_simulation(df, signal_column, initial_capital=1000, trade_percent=0.
                 asset_amount = trade_value / price
                 capital -= trade_value
                 # Record the current bullish signals for this trade
-                current_signals = df.loc[date][df.loc[date] > 0].index.tolist()
+                current_signals = [signal for signal in df.loc[date][df.loc[date] > 0].index if "_signal" in signal]
                 open_positions.append({
                     'buy_price': price,
                     'amount': asset_amount,
@@ -72,17 +74,41 @@ def generate_all_signals(df):
     return df
 
 
+
 def test_combinations(df, initial_capital=1000, trade_percent=0.05, max_trades_per_day=2, stop_loss=0.10):
     results = []
 
+    start_trade_percent = 0.05
+    end_trade_percent = 0.30
+    step_size = 0.05
+
+    trade_percent_values = [round(x, 2) for x in
+                            list(np.arange(start_trade_percent, end_trade_percent + step_size, step_size))]
+
+    stop_loss_values = [round(x, 2) for x in
+                            list(np.arange(start_trade_percent, end_trade_percent + step_size, step_size))]
+
     # Test individual signals
     signal_columns = ['macd_signal', 'bollinger_signal', 'rsi_signal', 'vwap_signal']
-    for signal in signal_columns:
+
+    def simulate_strategy(signal, trade_percent, stop_loss):
         final_capital, _ = trading_simulation(df, signal, initial_capital, trade_percent, max_trades_per_day, stop_loss)
-        results.append({
+        return {
             'strategy': signal,
+            'trade_percent': trade_percent,
+            'stop_loss': stop_loss,
             'final_capital': final_capital
-        })
+        }
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for trade_percent in trade_percent_values:
+            for stop_loss in stop_loss_values:
+                for signal in signal_columns:
+                    futures.append(executor.submit(simulate_strategy, signal, trade_percent, stop_loss))
+
+        for future in concurrent.futures.as_completed(futures):
+            results.append(future.result())
 
     # Test combinations of signals
     for i in range(2, len(signal_columns) + 1):
@@ -93,6 +119,7 @@ def test_combinations(df, initial_capital=1000, trade_percent=0.05, max_trades_p
                                                   max_trades_per_day, stop_loss)
             results.append({
                 'strategy': combined_signal_name,
+                'trade_percent': trade_percent,
                 'final_capital': final_capital
             })
 
